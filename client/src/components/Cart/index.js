@@ -1,12 +1,14 @@
 import React from "react";
+import { connect } from "react-redux";
 import CartItem from "../CartItem";
 import Auth from "../../utils/auth";
 import { useStoreContext } from "../../utils/GlobalState";
 import { TOGGLE_CART } from "../../utils/actions";
 import "./style.css";
 
-const Cart = () => {
-  const [state, dispatch] = useStoreContext();
+const Cart = ({ dispatch }) => {
+  console.log(dispatch);
+  const [state] = useStoreContext();
 
   function toggleCart() {
     dispatch({ type: TOGGLE_CART });
@@ -64,4 +66,4 @@ const Cart = () => {
   );
 };
 
-export default Cart;
+export default connect()(Cart);
