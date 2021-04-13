@@ -1,15 +1,19 @@
 import React, { useEffect } from "react";
 import { idbPromise } from "../../utils/helpers";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import CartItem from "../CartItem";
 import Auth from "../../utils/auth";
 import { useStoreContext } from "../../utils/GlobalState";
+import { QUERY_CHECKOUT } from "../../utils/queries";
+import { loadStripe } from "@stripe/stripe-js";
 import { TOGGLE_CART, ADD_MULTIPLE_TO_CART } from "../../utils/actions";
 import "./style.css";
+const stripePromise = loadStripe("pk_test_TYooMQauvdEDq54NiTphI7jx");
 
-const Cart = ({ dispatch }) => {
-  console.log(dispatch);
-  const [state] = useStoreContext();
+const Cart = () => {
+  const dispatch = useDispatch();
+  const state = useSelector((state) => state);
+  // const [state] = useStoreContext();
 
   useEffect(() => {
     async function getCart() {
@@ -32,6 +36,20 @@ const Cart = ({ dispatch }) => {
       sum += item.price * item.purchaseQuantity;
     });
     return sum.toFixed(2);
+  }
+
+  function submitCheckout() {
+    const productIds = [];
+
+    state.cart.forEach((item) => {
+      for (let i = 0; i < item.purchaseQuantity; i++) {
+        productIds.push(item._id);
+      }
+    });
+
+    getCheckout({
+      variables: { products: productIds },
+    });
   }
 
   if (!state.cartOpen) {
@@ -60,7 +78,7 @@ const Cart = ({ dispatch }) => {
             <strong>Total: ${calculateTotal()}</strong>
 
             {Auth.loggedIn() ? (
-              <button>Checkout</button>
+              <button onClick={submitCheckout}>Checkout</button>
             ) : (
               <span>(log in to check out)</span>
             )}
@@ -78,4 +96,4 @@ const Cart = ({ dispatch }) => {
   );
 };
 
-export default connect()(Cart);
+export default Cart;
