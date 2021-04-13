@@ -14,6 +14,7 @@ import { Provider } from "react-redux";
 import { createStore } from "redux";
 import { StoreProvider } from "./utils/GlobalState";
 import OrderHistory from "./pages/OrderHistory";
+<Route exact path="/success" component={Success} />;
 
 const store = createStore(reducer);
 
